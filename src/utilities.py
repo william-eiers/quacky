@@ -198,11 +198,61 @@ def get_abc_result_line(out, err):
                     'bound'), "count": match.group('count'),     "count_time": match.group('time')}
             continue
 
-        match = re.match(r".*report var:\s*(?P<var>.+)\s*",
-                         line, re.IGNORECASE)
+        match = re.match(r".*report var:\s*(?P<var>.+)\s*", line, re.IGNORECASE)
         if match:
             results["var"] = match.group('var')
             continue
+
+        match = re.match(r".*report baseline_regex:\s*(?P<baseline_regex>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["baseline_regex"] = match.group('baseline_regex')
+            
+        match = re.match(r".*report synthesized_regex:\s*(?P<synthesized_regex>.+)\s*", line, re.IGNORECASE)
+        if match:
+            results["synthesized_regex"] = match.group('synthesized_regex')
+        
+        match = re.match(r".*report baseline_not_synthesized:\s*(?P<baseline_not_synthesized>.+)\s*", line, re.IGNORECASE)
+        if match:
+            results["baseline_not_synthesized"] = match.group('baseline_not_synthesized')
+        
+        match = re.match(r".*report not_baseline_synthesized:\s*(?P<not_baseline_synthesized>.+)\s*", line, re.IGNORECASE)
+        if match:
+            results["not_baseline_synthesized"] = match.group('not_baseline_synthesized')
+        
+        match = re.match(r".*report regex_from_dfa:\s*(?P<regex_from_dfa>.+)\s*", line, re.IGNORECASE)
+        if match:
+            results["regex_from_dfa"] = match.group('regex_from_dfa')
+
+        match = re.match(r".*report regex_from_llm:\s*(?P<regex_from_llm>.+)\s*", line, re.IGNORECASE)
+        if match:
+            results["regex_from_llm"] = match.group('regex_from_llm')
+
+        match = re.match(r".*report ops_regex_from_dfa:\s*(?P<ops_regex_from_dfa>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["ops_regex_from_dfa"] = match.group('ops_regex_from_dfa')
+
+        match = re.match(r".*report ops_regex_from_llm:\s*(?P<ops_regex_from_llm>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["ops_regex_from_llm"] = match.group('ops_regex_from_llm')
+
+        match = re.match(r".*report length_regex_from_dfa:\s*(?P<length_regex_from_dfa>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["length_regex_from_dfa"] = match.group('length_regex_from_dfa')
+
+        match = re.match(r".*report length_regex_from_llm:\s*(?P<length_regex_from_llm>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["length_regex_from_llm"] = match.group('length_regex_from_llm')
+        
+        match = re.match(r".*report jaccard index numerator:\s*(?P<jaccard_numerator>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["jaccard_numerator"] = match.group('jaccard_numerator')
+        
+        match = re.match(r".*report jaccard index denominator:\s*(?P<jaccard_denominator>\d+)\s*", line, re.IGNORECASE)
+        if match:
+            results["jaccard_denominator"] = match.group('jaccard_denominator')
+        
+        
+
 
     results["var"] = var_results
     return results
