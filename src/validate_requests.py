@@ -62,7 +62,6 @@ def validate_requests(args):
 
         smt_formula_req += "(check-sat)"
 
-        print(smt_formula_req)
         solver.from_string(smt_formula_req)
         
 
