@@ -1,6 +1,7 @@
 from frontend import validate_args
 # from tabulate import tabulate
 from translator import call_translator
+from re2smt.re2smt import re2smt
 from utilities import *
 from utils.Shell import Shell
 from z3 import *
@@ -51,7 +52,13 @@ def validate_requests(args):
             for k,v in condition.items():
                 # keys can have ':' which mess up SMT syntax. replace ':' with '.'
                 k = k.replace(':','.')
-                if isinstance(v,int):
+
+                # generate constraint based on type (ip address, int, string)
+                # IP addresses are special (gets translated to bit string)
+                if "Ip" in k:
+                    addr,prefix = bit_string(v)
+                    smt_formula_req += '(assert (str.in.re {} {}))\n'.format(k, re2smt(addr[:prefix]))
+                elif isinstance(v,int):
                     smt_formula_req += "(assert (= {} {}))\n".format(k,v)
                 elif isinstance(v,str):
                     smt_formula_req += "(assert (= {} \"{}\"))\n".format(k,v)
@@ -61,12 +68,13 @@ def validate_requests(args):
                 
 
         smt_formula_req += "(check-sat)"
-
+        # \x00 (null) is special character for determining existence of a condition key (or principal)
+        # this causes issues with z3's from_string as it treats \x00 as end of input and terminates parsing early
+        smt_formula_req = smt_formula_req.replace('\x00','\x01')
         solver.from_string(smt_formula_req)
         
 
-
-
+        
         if(solver.check() == sat and effect == "allow") or (solver.check() != sat and effect != "allow"):
             results.append([req,"true"])
         else:
